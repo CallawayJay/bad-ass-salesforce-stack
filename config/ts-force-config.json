@@ -1,6 +1,6 @@
 {
   "auth": {
-    "username": "example-user"
+    "username": "jay.cogen@callaway.cloud"
   },
   "sObjects": ["Account"],
   "outPath": "./src/generated/sobs.ts"

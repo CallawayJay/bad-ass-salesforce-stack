@@ -1,4 +1,5 @@
-import { AccountDisplay } from '@src/components/accountDisplay';
+import { SearchControls } from '@src/components/searchControls';
+import { SearchResults } from '@src/components/searchResults';
 import {Account, AccountFields} from '@src/generated/sobs';
 import { Layout } from 'antd';
 import * as React from 'react';
@@ -7,6 +8,7 @@ import { generateSelect } from 'ts-force';
 
 interface AppState {
   acc: AccountFields;
+  accs: any;
 }
 
 class App extends React.Component<{}, AppState> {
@@ -16,17 +18,23 @@ class App extends React.Component<{}, AppState> {
 
     this.state = {
       acc: null,
+      accs: null,
     };
   }
 
   public componentDidMount() {
     // get all fields
-    Account.retrieve(`SELECT ${generateSelect(Object.values(Account.FIELDS))} FROM Account LIMIT 1`)
-    .then((accs) => this.setState({acc: accs[0]}));
+    Account.retrieve(`SELECT ${generateSelect(Object.values(Account.FIELDS))} FROM Account`)
+    .then((accs) => this.setState({accs}));
   }
 
   public render() {
-    return <AccountDisplay acc={this.state.acc} />;
+    return (
+      <div style={{ marginTop: 50, padding: 50}}>
+        <SearchControls />
+        <SearchResults accs={this.state.accs} />
+      </div>
+    );
   }
 }
 

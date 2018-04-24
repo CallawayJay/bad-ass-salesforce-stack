@@ -6,6 +6,7 @@ import { hot } from 'react-hot-loader';
 
 interface AccountDisplayProps {
   acc: AccountFields;
+  onBackClick: (account: AccountFields) => void;
 }
 
 export class AccountDisplay extends React.Component<AccountDisplayProps, {}> {
@@ -14,17 +15,25 @@ export class AccountDisplay extends React.Component<AccountDisplayProps, {}> {
     super(props);
   }
 
+  public handleBackClick = () => {
+    this.props.onBackClick(null);
+  }
+
   public render() {
-    if (!this.props.acc){
+    if (!this.props.acc) {
       return <div>No Account Found</div>;
     }
 
     return (
-      <Card title={this.props.acc.name}>
-        <Form>
+      <div>
+        <span className='back-btn' onClick={this.handleBackClick}>
+          Back
+        </span>
+        <h2>{this.props.acc.name}</h2>
+        <ul className='acc-list'>
           {this.renderFields()}
-        </Form>
-      </Card>
+        </ul>
+      </div>
     );
   }
 
@@ -32,7 +41,7 @@ export class AccountDisplay extends React.Component<AccountDisplayProps, {}> {
     return Object.keys(this.props.acc).map((key: keyof AccountFields) => {
       const meta = Account.FIELDS[key];
       if (meta && this.props.acc[key]) {
-        return <Form.Item label={meta.salesforceLabel}>{this.props.acc[key].toString()}</Form.Item>;
+        return <li><span>{meta.salesforceLabel}:</span> {this.props.acc[key].toString()}</li>;
       }
       return null;
     });

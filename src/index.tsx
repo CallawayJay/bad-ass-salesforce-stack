@@ -18,5 +18,4 @@ setDefaultConfig({
   instanceUrl:  __RESTHOST__,
 });
 
-
 ReactDOM.render(<App />, document.getElementById('root') as HTMLElement);
