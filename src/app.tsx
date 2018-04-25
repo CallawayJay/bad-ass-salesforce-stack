@@ -1,14 +1,12 @@
-import { SearchControls } from '@src/components/searchControls';
-import { SearchResults } from '@src/components/searchResults';
+import { AccountDisplay } from '@src/components/accountDisplay';
+import { SearchDisplay } from '@src/components/searchDisplay';
 import {Account, AccountFields} from '@src/generated/sobs';
 import { Layout } from 'antd';
 import * as React from 'react';
 import { hot } from 'react-hot-loader';
-import { generateSelect } from 'ts-force';
 
 interface AppState {
-  acc: AccountFields;
-  accs: any;
+  selectedAccount: AccountFields;
 }
 
 class App extends React.Component<{}, AppState> {
@@ -17,22 +15,29 @@ class App extends React.Component<{}, AppState> {
     super(props);
 
     this.state = {
-      acc: null,
-      accs: null,
+      selectedAccount: null,
     };
   }
 
-  public componentDidMount() {
-    // get all fields
-    Account.retrieve(`SELECT ${generateSelect(Object.values(Account.FIELDS))} FROM Account`)
-    .then((accs) => this.setState({accs}));
+  public setAccount = (account) => {
+    this.setState({selectedAccount: account});
+  }
+
+  public clearAccount = () => {
+    this.setState({selectedAccount: null});
   }
 
   public render() {
+    if (this.state.selectedAccount) {
+      return (
+        <div style={{ marginTop: 50, padding: 50}}>
+          <AccountDisplay account={this.state.selectedAccount} onBackClick={this.clearAccount} />
+        </div>
+      );
+    }
     return (
       <div style={{ marginTop: 50, padding: 50}}>
-        <SearchControls />
-        <SearchResults accs={this.state.accs} />
+        <SearchDisplay setAccount={this.setAccount}/>
       </div>
     );
   }
