@@ -52,7 +52,7 @@ export class SearchDisplay extends React.Component<SearchDisplayProps, SearchDis
                             style={{ color: 'rgba(0,0,0,.25)' }}
                         />
                     </FormItem>
-                    {this.state.searchResults && this.state.searchResults.length >= 3 &&
+                    {this.state.searchValue && this.state.searchValue.length >= 3 &&
                         <FormItem>
                             <Button 
                                 type='primary'
