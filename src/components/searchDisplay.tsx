@@ -1,4 +1,3 @@
-
 import { AccountDisplay } from '@src/components/accountDisplay';
 import { SearchResultsItem } from '@src/components/searchResultsItem';
 import { Account, AccountFields} from '@src/generated/sobs';
@@ -14,7 +13,7 @@ interface SearchDisplayProps {
 
 interface SearchDisplayStates {
     searchValue: string;
-    searchResults: any;
+    searchResults: Account[];
 }
 
 export class SearchDisplay extends React.Component<SearchDisplayProps, SearchDisplayStates> {
@@ -27,11 +26,11 @@ export class SearchDisplay extends React.Component<SearchDisplayProps, SearchDis
         };
     }
 
-    public updateSearchValue = (evt) => {
+    public updateSearchValue = (evt: React.ChangeEvent<HTMLInputElement>) => {
         this.setState({
           searchValue: evt.target.value,
         });
-      }
+    }
 
     public runSearch = () => {
         Account
@@ -43,42 +42,60 @@ export class SearchDisplay extends React.Component<SearchDisplayProps, SearchDis
     public render() {
         return (
             <div>
-                <Form layout='inline' style={{clear: 'both'}}>
-                    <FormItem>
-                        <Input 
-                            id='search-box'
-                            value={this.state.searchValue}
-                            onChange={evt => this.updateSearchValue(evt)}
-                            style={{ color: 'rgba(0,0,0,.25)' }}
-                        />
-                    </FormItem>
-                    {this.state.searchValue && this.state.searchValue.length >= 3 &&
-                        <FormItem>
-                            <Button 
-                                type='primary'
-                                htmlType='submit'
-                                onClick={this.runSearch}
-                            >
-                                Search
-                            </Button>
-                        </FormItem>
-                    }
-                    
-                </Form>
+                {renderSearchControls(this.state.searchValue, this.updateSearchValue, this.runSearch)}
                 <ul>
-                    {this.state.searchResults && this.renderSearchItems(this.props.setAccount, this.state.searchResults)}
+                    {this.state.searchResults && renderSearchItems(this.props.setAccount, this.state.searchResults)}
                 </ul>
             </div>
             
         );
     }
-
-    public renderSearchItems = (setAccount, searchResults) => {
-        return searchResults.map((account, i) => {
-            return(
-                <SearchResultsItem acc={account} onAccountClick={setAccount} key={i}/>
-            );
-        });
-    }
-
 }
+
+const renderSearchControls = (searchValue, updateSearchValue, runSearch) => {
+
+    return (
+        <Form layout='inline' style={{clear: 'both'}}>
+            {renderSearchBox(searchValue, updateSearchValue)}
+            {renderSearchButton(searchValue, runSearch)}
+        </Form>
+    );
+};
+
+const renderSearchBox = (searchValue, updateSearchValue) => {
+    return (
+        <FormItem>
+            <Input 
+                id='search-box'
+                value={searchValue}
+                onChange={updateSearchValue}
+                style={{ color: 'rgba(0,0,0,.25)' }}
+            />
+        </FormItem>);
+};
+
+const renderSearchButton = (searchValue, runSearch) => {
+    if (searchValue && searchValue.length >= 1) {
+        return (
+            <FormItem>
+                <Button 
+                    type='primary'
+                    htmlType='submit'
+                    onClick={runSearch}
+                >
+                    Search
+                </Button>
+            </FormItem>
+        );
+    } else {
+        return null;
+    }
+};
+
+const renderSearchItems = (setAccount, searchResults) => {
+    return searchResults.map((account, i) => {
+        return(
+            <SearchResultsItem acc={account} onAccountClick={setAccount} key={i}/>
+        );
+    });
+};
