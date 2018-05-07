@@ -26,43 +26,72 @@ export class SearchDisplay extends React.Component<SearchDisplayProps, SearchDis
         };
     }
 
-    public updateSearchValue = (evt: React.ChangeEvent<HTMLInputElement>) => {
+    public render() {
+        return (
+            <div>
+                <SearchControls 
+                    searchValue={this.state.searchValue}
+                    updateSearchValue={this.updateSearchValue}
+                    runSearch={this.runSearch}
+                />
+                <ul>
+                    {this.renderSearchItems(this.props.setAccount, this.state.searchResults)}
+                </ul>
+            </div>
+        );
+    }
+
+    private updateSearchValue = (evt: React.ChangeEvent<HTMLInputElement>) => {
         this.setState({
           searchValue: evt.target.value,
         });
     }
 
-    public runSearch = () => {
+    private runSearch = () => {
         Account
         .retrieve(`SELECT ${generateSelect(Object.values(Account.FIELDS))} 
         FROM Account WHERE Name LIKE '%${this.state.searchValue}%'`)
         .then((accs) => this.setState({searchResults: accs}));
     }
 
-    public render() {
-        return (
-            <div>
-                {renderSearchControls(this.state.searchValue, this.updateSearchValue, this.runSearch)}
-                <ul>
-                    {this.state.searchResults && renderSearchItems(this.props.setAccount, this.state.searchResults)}
-                </ul>
-            </div>
-            
-        );
+    private renderSearchItems = (setAccount, searchResults) => {
+        if (searchResults) {
+            return searchResults.map((account, i) => {
+                return(
+                    <SearchResultsItem acc={account} onAccountClick={setAccount} key={i}/>
+                );
+            });
+        } else {
+            return null;
+        }
     }
 }
 
-const renderSearchControls = (searchValue, updateSearchValue, runSearch) => {
+/* SEARCH CONTROLS */
 
+interface SearchControlProps {
+    searchValue: string;
+    updateSearchValue: (e) => void;
+    runSearch: () => void;
+ }
+
+const SearchControls: React.SFC<SearchControlProps> = (props) => {
     return (
         <Form layout='inline' style={{clear: 'both'}}>
-            {renderSearchBox(searchValue, updateSearchValue)}
-            {renderSearchButton(searchValue, runSearch)}
+            <SearchBox searchValue={props.searchValue} updateSearchValue={props.updateSearchValue}/>
+            <SearchButton searchValue={props.searchValue} runSearch={props.runSearch}/>
         </Form>
     );
 };
 
-const renderSearchBox = (searchValue, updateSearchValue) => {
+/* SEARCH BOX */
+
+interface SearchBoxProps {
+    searchValue: string;
+    updateSearchValue: (e) => void;
+}
+
+const SearchBox: React.SFC<SearchBoxProps> = (searchValue, updateSearchValue) => {
     return (
         <FormItem>
             <Input 
@@ -71,11 +100,19 @@ const renderSearchBox = (searchValue, updateSearchValue) => {
                 onChange={updateSearchValue}
                 style={{ color: 'rgba(0,0,0,.25)' }}
             />
-        </FormItem>);
+        </FormItem>
+    );
 };
 
-const renderSearchButton = (searchValue, runSearch) => {
-    if (searchValue && searchValue.length >= 1) {
+/* SEARCH BUTTON */
+
+interface SearchButtonProps {
+    searchValue: string;
+    runSearch: () => void;
+}
+
+const SearchButton: React.SFC<SearchButtonProps> = (searchValue, runSearch) => {
+    if (searchValue && searchValue.children.toString.length >= 1) {
         return (
             <FormItem>
                 <Button 
@@ -90,12 +127,4 @@ const renderSearchButton = (searchValue, runSearch) => {
     } else {
         return null;
     }
-};
-
-const renderSearchItems = (setAccount, searchResults) => {
-    return searchResults.map((account, i) => {
-        return(
-            <SearchResultsItem acc={account} onAccountClick={setAccount} key={i}/>
-        );
-    });
 };
