@@ -53,7 +53,6 @@ export interface AccountFields {
     readonly lastActivityDate?: Date;
     readonly lastViewedDate?: Date;
     readonly lastReferencedDate?: Date;
-    readonly isCustomerPortal?: boolean;
     readonly jigsaw?: string;
     readonly jigsawCompanyId?: string;
     readonly cleanStatus?: string;
@@ -176,8 +175,6 @@ export class Account extends RestObject implements AccountFields {
     public lastViewedDate: Date;
     @sField({ apiName: 'LastReferencedDate', readOnly: true, required: false, reference: undefined, childRelationship: false, salesforceType: SalesforceFieldType.DATETIME, salesforceLabel: 'Last Referenced Date' })
     public lastReferencedDate: Date;
-    @sField({ apiName: 'IsCustomerPortal', readOnly: false, required: true, reference: undefined, childRelationship: false, salesforceType: SalesforceFieldType.BOOLEAN, salesforceLabel: 'Customer Portal Account' })
-    public isCustomerPortal: boolean;
     @sField({ apiName: 'Jigsaw', readOnly: false, required: false, reference: undefined, childRelationship: false, salesforceType: SalesforceFieldType.STRING, salesforceLabel: 'Data.com Key' })
     public jigsaw: string;
     @sField({ apiName: 'JigsawCompanyId', readOnly: true, required: false, reference: undefined, childRelationship: false, salesforceType: SalesforceFieldType.STRING, salesforceLabel: 'Jigsaw Company ID' })
@@ -266,7 +263,6 @@ export class Account extends RestObject implements AccountFields {
         this.lastActivityDate = void 0;
         this.lastViewedDate = void 0;
         this.lastReferencedDate = void 0;
-        this.isCustomerPortal = void 0;
         this.jigsaw = void 0;
         this.jigsawCompanyId = void 0;
         this.cleanStatus = void 0;
